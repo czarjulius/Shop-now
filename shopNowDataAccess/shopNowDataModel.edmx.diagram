@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="107a26d09ab94d4b868e816756b2cf9a" Name="Diagram1">
+        <EntityTypeShape EntityType="shop_now_DBModel.CATEGORY" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="shop_now_DBModel.ORDER" Width="1.5" PointX="3" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="shop_now_DBModel.ORDER_DETAIL" Width="1.5" PointX="5.25" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="shop_now_DBModel.PRODUCT" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="shop_now_DBModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="shop_now_DBModel.USER" Width="1.5" PointX="0.75" PointY="5" IsExpanded="true" />
+        <AssociationConnector Association="shop_now_DBModel.FK_PRODUCT_CATEGORY" ManuallyRouted="false" />
+        <AssociationConnector Association="shop_now_DBModel.FK_ORDER_DETAIL_ORDER" ManuallyRouted="false" />
+        <AssociationConnector Association="shop_now_DBModel.FK_ORDER_USER" ManuallyRouted="false" />
+        <AssociationConnector Association="shop_now_DBModel.FK_ORDER_DETAIL_PRODUCT" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
