@@ -10,17 +10,21 @@ namespace shopNowApp.Controllers
 {
     public class UserController : ApiController
     {
+        private shop_now_DBEntities db;
+
+        public UserController()
+        {
+            db = new shop_now_DBEntities();
+        }
+
 
         [HttpGet]
         public HttpResponseMessage fetchAllUsers()
         {
             try
             {
-                using (shop_now_DBEntities entities = new shop_now_DBEntities())
-                {
-                     return Request.CreateResponse(HttpStatusCode.OK, entities.USER.ToList());
-                    
-                }
+                    return Request.CreateResponse(HttpStatusCode.OK, db.USER.ToList());
+
 
             }
             catch (Exception ex)
@@ -31,15 +35,11 @@ namespace shopNowApp.Controllers
 
         }
 
-        
 
         [HttpPost]
-        public HttpResponseMessage addUser([FromBody] USER user)
+        public HttpResponseMessage userSignup([FromBody] USER user)
         {
             try {
-
-                using (shop_now_DBEntities entities = new shop_now_DBEntities())
-                {
                     var newUser = new USER()
                     {
                         firstName = user.firstName,
@@ -52,13 +52,12 @@ namespace shopNowApp.Controllers
                         isAdmin = false
                     };
 
-                    entities.USER.Add(newUser);
-                    entities.SaveChanges();
+                    db.USER.Add(newUser);
+                    db.SaveChanges();
 
                     var message = Request.CreateResponse(HttpStatusCode.Created, newUser);
 
                     return message;
-                }
             }
             catch (Exception ex) {
 
@@ -68,5 +67,31 @@ namespace shopNowApp.Controllers
         }
 
 
+        [Route("api/login")]
+        [HttpPost]
+        public HttpResponseMessage userLogin([FromBody] USER user)
+        {
+            try {
+
+                    var checkUser = db.USER.Where(e => e.email == user.email && e.password == user.password ).FirstOrDefault();
+
+                    if (checkUser != null)
+                    {
+
+                        return Request.CreateResponse(HttpStatusCode.OK, "Login Successful");
+                    }
+                    else
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Email Or Password Incorrect");
+                    }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
     }
 }
