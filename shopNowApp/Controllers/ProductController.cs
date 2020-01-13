@@ -23,10 +23,8 @@ namespace shopNowApp.Controllers
             try
             {
                 return Request.CreateResponse(HttpStatusCode.OK, db.PRODUCT.ToList());
-
-
             }
-            catch (Exception ex)
+            catch (Exception ex )
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
