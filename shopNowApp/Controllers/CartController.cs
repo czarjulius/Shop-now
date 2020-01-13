@@ -24,25 +24,34 @@ namespace shopNowApp.Controllers
         {
             try {
 
-                string queryProduct = "SELECT * FROM Product WHERE productId =" + cart.productId;
-                PRODUCT product = await db.PRODUCT.SqlQuery(queryProduct, cart.productId).SingleOrDefaultAsync();
+                PRODUCT product = db.PRODUCT.Where(u => u.productId == cart.productId).FirstOrDefault();
+                USER queryUser = db.USER.Where(u => u.cartId == cart.cartId).FirstOrDefault();
+                CART cartFound = db.CART.Where(u => u.productId == cart.productId).FirstOrDefault();
+
 
                 if (product == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, "There is no Product with Id " + cart.productId);
-                }
-                else
+                }else
                 {
-                    string queryCart = "SELECT * FROM Cart WHERE productId = " + cart.productId;
-                    CART cartFound = await db.CART.SqlQuery(queryCart, cart.productId).SingleOrDefaultAsync();
+                    
 
-                    if (cartFound == null)
+                    if (cartFound != null)
                     {
+                        cartFound.quantity += 1;
+                        cartFound.subTotal = cartFound.quantity * product.productPrice;
+
+                        db.SaveChanges();
+                        return Request.CreateResponse(HttpStatusCode.Created, cartFound);
+                    }
+                    else
+                    {
+                       
                         var newCart = new CART()
                         {
                             cartId = cart.cartId,
                             productId = cart.productId,
-                            quantity =  cart.quantity | 1,
+                            quantity = cart.quantity | 1,
                             subTotal = cart.quantity * product.productPrice
                         };
 
@@ -50,14 +59,8 @@ namespace shopNowApp.Controllers
                         db.SaveChanges();
 
                         return Request.CreateResponse(HttpStatusCode.Created, newCart);
-                    }
-                    else
-                    {
-                        cartFound.quantity += 1;
-                        cartFound.subTotal = cartFound.quantity * product.productPrice;
 
-                        db.SaveChanges();
-                        return Request.CreateResponse(HttpStatusCode.Created, cartFound);
+
                     }
 
                   
@@ -71,5 +74,46 @@ namespace shopNowApp.Controllers
         }
 
 
+        [HttpGet]
+        [Route("api/cart/{cartId}")]
+        public async Task<HttpResponseMessage> fetchUserCart(int cartId)
+        {
+            try
+            {
+                USER queryUser = db.USER.Where(u => u.cartId == cartId).FirstOrDefault();
+
+                if (queryUser == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "User with cart Id " + cartId + " not found");
+                }
+                else
+                {
+
+                    var userCart = db.CART.Where(u => u.cartId == cartId).ToList();
+
+                    if (userCart.Count() > 0)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, userCart);
+
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, "Cart Is Empty");
+
+                    }
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
+
+        }
+
+
+        
     }
 }
