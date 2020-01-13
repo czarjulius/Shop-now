@@ -114,6 +114,31 @@ namespace shopNowApp.Controllers
         }
 
 
-        
+        [HttpDelete]
+        public HttpResponseMessage removeCartItemById(int id)
+        {
+            try
+            {
+                var cartId = db.CART.FirstOrDefault(x => x.Id == id);
+                if (cartId == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Cart Product with id " + id.ToString() + " not found");
+                }
+                else
+                {
+                    db.CART.Remove(cartId);
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+
+            }
+
+        }
     }
 }
