@@ -115,18 +115,19 @@ namespace shopNowApp.Controllers
 
 
         [HttpDelete]
+        [Route("api/cart/{id}")]
         public HttpResponseMessage removeCartItemById(int id)
         {
             try
             {
-                var cartId = db.CART.FirstOrDefault(x => x.Id == id);
-                if (cartId == null)
+                CART cart = db.CART.Where(x => x.Id == id).FirstOrDefault();
+                if (cart == null)
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Cart Product with id " + id.ToString() + " not found");
                 }
                 else
                 {
-                    db.CART.Remove(cartId);
+                    db.CART.Remove(cart);
                     db.SaveChanges();
                     return Request.CreateResponse(HttpStatusCode.OK);
 
