@@ -20,23 +20,26 @@ namespace shopNowApp.Controllers
 
 
         [HttpPost]
-        public async Task<HttpResponseMessage> addToCart([FromBody] CART cart)
+        [Route("api/cart/{cartId}/{productId}")]
+        public HttpResponseMessage addToCart(int cartId, int productId)
         {
-            try {
+            try
+            {
 
-                PRODUCT product = db.PRODUCT.Where(u => u.productId == cart.productId).FirstOrDefault();
-                USER queryUser = db.USER.Where(u => u.cartId == cart.cartId).FirstOrDefault();
-                CART cartFound = db.CART.Where(u => u.productId == cart.productId).FirstOrDefault();
+                PRODUCT product = db.PRODUCT.Where(u => u.productId == productId).FirstOrDefault();
+                //USER queryUser = db.USER.Where(u => u.cartId == cart.cartId).FirstOrDefault();
+                CART cartFound = db.CART.Where(u => u.productId == productId && u.cartId == cartId).FirstOrDefault();
 
 
                 if (product == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, "There is no Product with Id " + cart.productId);
-                }else
+                    return Request.CreateResponse(HttpStatusCode.OK, "There is no Product with Id " + productId);
+                }
+                else
                 {
-                    
 
-                    if (cartFound != null)
+
+                    if (cartFound != null )
                     {
                         cartFound.quantity += 1;
                         cartFound.subTotal = cartFound.quantity * product.productPrice;
@@ -46,13 +49,15 @@ namespace shopNowApp.Controllers
                     }
                     else
                     {
-                       
+
                         var newCart = new CART()
                         {
-                            cartId = cart.cartId,
-                            productId = cart.productId,
-                            quantity = cart.quantity | 1,
-                            subTotal = cart.quantity * product.productPrice
+                            cartId = cartId,
+                            productId = productId,
+                            //quantity = cart.quantity == 0? 1:cart.quantity,
+                            quantity = 1,
+                            isClosed = false,
+                            subTotal = product.productPrice
                         };
 
                         db.CART.Add(newCart);
@@ -63,11 +68,12 @@ namespace shopNowApp.Controllers
 
                     }
 
-                  
+
                 }
-  
+
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
 
             }
@@ -76,7 +82,7 @@ namespace shopNowApp.Controllers
 
         [HttpGet]
         [Route("api/cart/{cartId}")]
-        public async Task<HttpResponseMessage> fetchUserCart(int cartId)
+        public HttpResponseMessage fetchUserCart(int cartId)
         {
             try
             {
@@ -102,7 +108,7 @@ namespace shopNowApp.Controllers
 
                     }
                 }
-                
+
 
             }
             catch (Exception ex)
@@ -141,5 +147,77 @@ namespace shopNowApp.Controllers
             }
 
         }
+
+
+        [HttpPut]
+        [Route("api/cart/{id}")]
+        public HttpResponseMessage editEmployeeById(int id, [FromBody] CART cart)
+        {
+            try
+            {
+
+
+                var cartToEdit = db.CART.Where(x => x.Id == id).FirstOrDefault();
+                var product = db.PRODUCT.Where(u => u.productId == cartToEdit.productId).FirstOrDefault();
+
+                if (cartToEdit == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Cart Product with id " + id.ToString() + " not found");
+                }
+                else
+                {
+                    cartToEdit.quantity = cart.quantity;
+                    cartToEdit.subTotal = cart.quantity * product.productPrice;
+
+                    db.SaveChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK, cartToEdit);
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        // The endpoint for checkout details
+        [HttpGet]
+        [Route("api/checkout/{cartId}")]
+        public HttpResponseMessage checkoutReceipt(int cartId)
+        {
+            try
+            {
+                USER queryUser = db.USER.Where(u => u.cartId == cartId).FirstOrDefault();
+
+                if (queryUser == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "User with cart Id " + cartId + " not found");
+                }
+                else
+                {
+
+                    List<CART> queryCart = db.CART.Where(u => u.cartId == cartId).ToList();
+
+
+
+                    return Request.CreateResponse(HttpStatusCode.OK, queryCart);
+
+                    
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
+
+        }
+
+
     }
 }

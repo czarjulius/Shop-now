@@ -19,5 +19,6 @@ namespace shopNowDataAccess
         public Nullable<int> productId { get; set; }
         public Nullable<int> quantity { get; set; }
         public Nullable<decimal> subTotal { get; set; }
+        public Nullable<bool> isClosed { get; set; }
     }
 }
