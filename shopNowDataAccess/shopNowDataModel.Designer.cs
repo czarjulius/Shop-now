@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\NGWU JULIUS C\source\repos\shopNowSolution\shopNowDataAccess\shopNowDataModel.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\NGWU JULIUS C\Desktop\AppDev\Projects\shopNowSolution\shopNowDataAccess\shopNowDataModel.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

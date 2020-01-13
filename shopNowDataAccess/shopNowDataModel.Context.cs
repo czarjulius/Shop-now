@@ -31,5 +31,6 @@ namespace shopNowDataAccess
         public virtual DbSet<PRODUCT> PRODUCT { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<USER> USER { get; set; }
+        public virtual DbSet<CART> CART { get; set; }
     }
 }

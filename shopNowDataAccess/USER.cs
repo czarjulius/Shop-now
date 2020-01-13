@@ -29,8 +29,11 @@ namespace shopNowDataAccess
         public string phone { get; set; }
         public string address { get; set; }
         public Nullable<bool> isAdmin { get; set; }
+        public Nullable<int> cartId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ORDER> ORDER { get; set; }
+        public virtual USER USER1 { get; set; }
+        public virtual USER USER2 { get; set; }
     }
 }

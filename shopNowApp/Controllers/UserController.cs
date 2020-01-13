@@ -40,7 +40,11 @@ namespace shopNowApp.Controllers
         public HttpResponseMessage userSignup([FromBody] USER user)
         {
             try {
-                    var newUser = new USER()
+
+                Random generator = new Random();
+                String r = generator.Next(0, 999999).ToString("D6");
+
+                var newUser = new USER()
                     {
                         firstName = user.firstName,
                         lastName = user.lastName,
@@ -49,8 +53,9 @@ namespace shopNowApp.Controllers
                         password = user.password,
                         phone = user.phone,
                         address = user.address,
-                        isAdmin = false
-                    };
+                        isAdmin = false,
+                        cartId = int.Parse(r)
+            };
 
                     db.USER.Add(newUser);
                     db.SaveChanges();

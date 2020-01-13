@@ -17,6 +17,23 @@ namespace shopNowApp.Controllers
             db = new shop_now_DBEntities();
         }
 
+        [HttpGet]
+        public HttpResponseMessage fetchAllOrder(int id)
+        {
+            try
+            {
+                var AllOrderByUserId = db.ORDER.Where(u => u.userId == id).ToList();
 
+                return Request.CreateResponse(HttpStatusCode.OK, AllOrderByUserId);
+
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
+
+        }
     }
 }

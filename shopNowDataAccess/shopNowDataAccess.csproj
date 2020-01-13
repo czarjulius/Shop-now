@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CART.cs">
+      <DependentUpon>shopNowDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="CATEGORY.cs">
       <DependentUpon>shopNowDataModel.tt</DependentUpon>
     </Compile>
