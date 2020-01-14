@@ -11,6 +11,7 @@ namespace shopNowApp.Models
         public string productName { get; set; }
         public string productImage { get; set; }
         public string catName { get; set; }
+        public int catId { get; set; }
         public Nullable<decimal> productPrice { get; set; }
         public Nullable<bool> isAvailable { get; set; }
         public Nullable<System.DateTime> createdOn { get; set; }

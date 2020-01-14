@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using shopNowApp.Models;
+
 
 namespace shopNowApp.Controllers
 {
@@ -22,7 +24,14 @@ namespace shopNowApp.Controllers
         {
             try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, db.CATEGORY.ToList());
+
+                var categoriesFetched = from c in db.CATEGORY
+                                      select new CategoryDTO()
+                                      {
+                                          catId = c.catId,
+                                          catName = c.catName
+                                      };
+                return Request.CreateResponse(HttpStatusCode.OK, categoriesFetched);
                 
             }
             catch (Exception ex)
@@ -42,12 +51,18 @@ namespace shopNowApp.Controllers
                 {
                     catName = category.catName
                 };
-
                 db.CATEGORY.Add(newCategory);
                 db.SaveChanges();
 
-                var message = Request.CreateResponse(HttpStatusCode.Created, newCategory );
 
+                var categoryJustCreated = db.CATEGORY.Where(c => c.catId == newCategory.catId).Select(c => new CategoryDTO
+                {
+                    catId = c.catId,
+                    catName = category.catName
+
+                }).FirstOrDefault();
+
+                var message = Request.CreateResponse(HttpStatusCode.Created, categoryJustCreated);
                 return message;
             }
             catch (Exception ex)
