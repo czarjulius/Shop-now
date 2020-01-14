@@ -1,10 +1,12 @@
-﻿using shopNowDataAccess;
+﻿using shopNowApp.Models;
+using shopNowDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace shopNowApp.Controllers
 {
@@ -18,11 +20,60 @@ namespace shopNowApp.Controllers
         }
 
         [HttpGet]
+        [ResponseType(typeof(ProductDTO))]
         public HttpResponseMessage fetchAllProducts()
         {
             try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, db.PRODUCT.ToList());
+                var productsFetched = from p in db.PRODUCT
+                                      select new ProductDTO()
+                                      {
+                                          productId = p.productId,
+                                          productName = p.productName,
+                                          productImage = p.productImage,
+                                          catName = p.CATEGORY.catName,
+                                          productPrice = p.productPrice,
+                                          isAvailable = p.isAvailable,
+                                          createdOn = p.createdOn,
+                                          productDescription = p.productDescription,
+                                      };
+                return Request.CreateResponse(HttpStatusCode.OK, productsFetched);
+            }
+            catch (Exception ex )
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
+
+        }
+
+
+        [HttpGet]
+        public HttpResponseMessage fetchProductById(int id)
+        {
+            try
+            {
+                var productFetched  = db.PRODUCT.Where(p => p.productId == id).Select(p => new ProductDTO
+                                      {
+                                          productId = p.productId,
+                                          productName = p.productName,
+                                          productImage = p.productImage,
+                                          catName = p.CATEGORY.catName,
+                                          productPrice = p.productPrice,
+                                          isAvailable = p.isAvailable,
+                                          createdOn = p.createdOn,
+                                          productDescription = p.productDescription,
+                                      }).FirstOrDefault();
+
+                if(productFetched != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, productFetched);
+
+                }
+                else
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Product with Id "+ id + " not found");
+                }
             }
             catch (Exception ex )
             {
@@ -34,11 +85,22 @@ namespace shopNowApp.Controllers
 
         [HttpGet]
         [Route("api/product/available")]
+        [ResponseType(typeof(ProductDTO))]
         public HttpResponseMessage fetchAllAvailableProducts()
         {
             try
             {
-                var avalaibleProducts = db.PRODUCT.Where(e => e.isAvailable == true).ToList();
+                var avalaibleProducts = db.PRODUCT.Where(p => p.isAvailable == true).Select(p => new ProductDTO
+                {
+                    productId = p.productId,
+                    productName = p.productName,
+                    productImage = p.productImage,
+                    catName = p.CATEGORY.catName,
+                    productPrice = p.productPrice,
+                    isAvailable = p.isAvailable,
+                    createdOn = p.createdOn,
+                    productDescription = p.productDescription,
+                }).ToList();
                 if (avalaibleProducts.Count() > 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, avalaibleProducts);

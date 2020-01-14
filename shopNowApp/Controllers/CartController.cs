@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using shopNowApp.Models;
 
 namespace shopNowApp.Controllers
 {
@@ -39,7 +40,7 @@ namespace shopNowApp.Controllers
                 {
 
 
-                    if (cartFound != null )
+                    if (cartFound != null)
                     {
                         cartFound.quantity += 1;
                         cartFound.subTotal = cartFound.quantity * product.productPrice;
@@ -190,33 +191,42 @@ namespace shopNowApp.Controllers
         {
             try
             {
-                USER queryUser = db.USER.Where(u => u.cartId == cartId).FirstOrDefault();
 
-                if (queryUser == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, "User with cart Id " + cartId + " not found");
-                }
-                else
-                {
+                //UserCart queryUserCart = UserCart.u.Where(u => u.cartId == cartId).FirstOrDefault();
+                UserCart queryUserCart = new UserCart();
 
-                    List<CART> queryCart = db.CART.Where(u => u.cartId == cartId).ToList();
+                queryUserCart.user =  db.USER.Where(u => u.cartId == cartId).FirstOrDefault();
+            
 
 
 
-                    return Request.CreateResponse(HttpStatusCode.OK, queryCart);
+                //USER queryUser = db.USER.Where(u => u.cartId == cartId).FirstOrDefault();
 
-                    
-                }
-
-
-            }
-            catch (Exception ex)
+            if (queryUserCart.user == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+                return Request.CreateResponse(HttpStatusCode.OK, "User with cart Id " + cartId + " not found");
+            }
+            else
+            {
+
+                    queryUserCart.cart = db.CART.Where(u => u.cartId == cartId && u.isClosed == false).ToList();
+
+
+
+                return Request.CreateResponse(HttpStatusCode.OK, queryUserCart);
+
+
             }
 
 
         }
+        catch (Exception ex)
+        {
+            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+        }
+
+
+}
 
 
     }

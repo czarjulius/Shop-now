@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using shopNowApp.Models;
 
 namespace shopNowApp.Controllers
 {
@@ -23,7 +24,26 @@ namespace shopNowApp.Controllers
         {
             try
             {
-                    return Request.CreateResponse(HttpStatusCode.OK, db.USER.ToList());
+                var allCustomers = from u in db.USER
+                                   select new UserDTO()
+                                   {
+                                        userId = u.userId,
+                                        firstName = u.firstName,
+                                        lastName = u.lastName,
+                                        email = u.email,
+                                        createdOn = u.createdOn,
+                                        phone = u.phone,
+                                        address = u.address,
+                                        isAdmin = u.isAdmin,
+                                        cartId = u.cartId
+                                    };
+
+                if (allCustomers != null) {
+                    return Request.CreateResponse(HttpStatusCode.OK, allCustomers);
+
+                } else {
+                    return Request.CreateResponse(HttpStatusCode.OK, "No Customer Created yet");
+                }
 
 
             }
