@@ -79,8 +79,22 @@ namespace shopNowApp.Controllers
 
                     db.USER.Add(newUser);
                     db.SaveChanges();
+                
 
-                    var message = Request.CreateResponse(HttpStatusCode.Created, newUser);
+                var userJustCreated = db.USER.Where(u => u.userId == newUser.userId).Select(u => new UserDTO
+                                    {
+                                       userId = u.userId,
+                                       firstName = u.firstName,
+                                       lastName = u.lastName,
+                                       email = u.email,
+                                       createdOn = u.createdOn,
+                                       phone = u.phone,
+                                       address = u.address,
+                                       isAdmin = u.isAdmin,
+                                       cartId = u.cartId
+                                    }).FirstOrDefault();
+
+                var message = Request.CreateResponse(HttpStatusCode.Created, userJustCreated);
 
                     return message;
             }
@@ -98,12 +112,24 @@ namespace shopNowApp.Controllers
         {
             try {
 
-                    var checkUser = db.USER.Where(e => e.email == user.email && e.password == user.password ).FirstOrDefault();
+                var checkUser = db.USER.Where(e => e.email == user.email && e.password == user.password).Select(u => new UserDTO
+                {
+                    message = "Login Successful",
+                    userId = u.userId,
+                    firstName = u.firstName,
+                    lastName = u.lastName,
+                    email = u.email,
+                    createdOn = u.createdOn,
+                    phone = u.phone,
+                    address = u.address,
+                    isAdmin = u.isAdmin,
+                    cartId = u.cartId
+                }).FirstOrDefault();
 
                     if (checkUser != null)
                     {
 
-                        return Request.CreateResponse(HttpStatusCode.OK, "Login Successful");
+                        return Request.CreateResponse(HttpStatusCode.OK, checkUser);
                     }
                     else
                     {
